@@ -3,22 +3,25 @@
 const { SMTPServer } = require('smtp-server');
 const { simpleParser } = require('mailparser');
 
-// SMTP 서버를 시작하는 함수를 정의합니다.
-const startSmtpServer = () => {
+// emails 배열을 파라미터로 받도록 수정합니다.
+const startSmtpServer = (emails) => {
     const server = new SMTPServer({
         secure: false,
         authOptional: true,
         onData(stream, session, callback) {
-            console.log('📬 새로운 메일 수신 시작!');
             simpleParser(stream, {}, (err, parsed) => {
                 if (err) {
                     console.error("이메일 파싱 오류:", err);
                 } else {
-                    console.log("======================================");
-                    console.log("  보낸 사람: ", parsed.from.text);
-                    console.log("  받는 사람: ", parsed.to.text);
-                    console.log("  제목: ", parsed.subject);
-                    console.log("======================================");
+                    console.log('✅ 이메일 수신 및 저장 성공:', parsed.subject);
+
+                    // 새로 추가된 부분: ID와 수신 날짜를 추가해서 emails 배열에 저장
+                    const newEmail = {
+                        id: Date.now(), // 간단한 고유 ID 생성
+                        date: new Date(),
+                        ...parsed,
+                    };
+                    emails.unshift(newEmail); // 배열의 맨 앞에 추가해서 최신 메일이 위로 오게 함
                 }
             });
             stream.on('end', callback);
@@ -26,7 +29,7 @@ const startSmtpServer = () => {
     });
 
     server.on('error', err => {
-        console.log('서버 에러 발생:', err.message);
+        console.log('SMTP 서버 에러:', err.message);
     });
 
     server.listen(25, () => {
@@ -34,5 +37,4 @@ const startSmtpServer = () => {
     });
 };
 
-// 다른 파일에서 이 함수를 가져다 쓸 수 있도록 내보냅니다.
 module.exports = { startSmtpServer };
