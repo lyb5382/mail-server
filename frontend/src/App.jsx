@@ -12,6 +12,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [mails, setMails] = useState([]);
   const [selectedMail, setSelectedMail] = useState(null);
+  const [isCopied, setIsCopied] = useState(false); // ✨ 복사 상태를 알려줄 state 추가
 
   const domain = 'lyb2027.duckdns.org';
   const apiUrl = `http://${domain}:8080`;
@@ -66,6 +67,16 @@ function App() {
     };
   };
 
+  // ✨ 복사 버튼 클릭 시 실행될 함수
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(email).then(() => {
+      setIsCopied(true); // 복사 성공 시 true로 변경
+      setTimeout(() => setIsCopied(false), 2000); // 2초 후에 다시 원래대로 복귀
+    }).catch(err => {
+      console.error('복사 실패:', err);
+    });
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -78,7 +89,9 @@ function App() {
           <>
             <div className="email-display">
               <h2>{email}</h2>
-              <button>복사</button>
+              <button onClick={handleCopyEmail}>
+                {isCopied ? '복사 완료!' : '복사'}
+              </button>
             </div>
             <div className="mailbox">
               {/* ✨ selectedMail 상태에 따라 다른 내용을 보여줍니다 */}
