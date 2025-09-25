@@ -9,8 +9,6 @@ const startSmtpServer = (emails, io) => {
         // Certbot으로 발급받은 SSL 인증서 파일 경로를 지정합니다.
         key: fs.readFileSync('/etc/letsencrypt/live/lyb2027.duckdns.org/privkey.pem'),
         cert: fs.readFileSync('/etc/letsencrypt/live/lyb2027.duckdns.org/fullchain.pem'),
-        ciphers: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA',
-        minVersion: 'TLSv1.1',
 
         // 로그인 없이 모든 메일을 받도록 설정합니다.
         authOptional: true,
