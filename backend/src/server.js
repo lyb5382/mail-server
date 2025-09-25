@@ -4,24 +4,19 @@ const { SMTPServer } = require('smtp-server');
 const { simpleParser } = require('mailparser');
 
 // emails 배열을 파라미터로 받도록 수정합니다.
-const startSmtpServer = (emails) => {
+const startSmtpServer = (emails, io) => {
     const server = new SMTPServer({
-        secure: false,
-        authOptional: true,
+        // ... (secure, authOptional 등은 동일)
         onData(stream, session, callback) {
             simpleParser(stream, {}, (err, parsed) => {
                 if (err) {
-                    console.error("이메일 파싱 오류:", err);
+                    // ...
                 } else {
-                    console.log('✅ 이메일 수신 및 저장 성공:', parsed.subject);
+                    // ... (newEmail 객체 만드는 부분은 동일)
+                    emails.unshift(newEmail);
 
-                    // 새로 추가된 부분: ID와 수신 날짜를 추가해서 emails 배열에 저장
-                    const newEmail = {
-                        id: Date.now(), // 간단한 고유 ID 생성
-                        date: new Date(),
-                        ...parsed,
-                    };
-                    emails.unshift(newEmail); // 배열의 맨 앞에 추가해서 최신 메일이 위로 오게 함
+                    // ✨ "new_mail" 이라는 이름으로 모든 클라이언트에게 새 메일 정보를 방송!
+                    io.emit('new_mail', newEmail);
                 }
             });
             stream.on('end', callback);
